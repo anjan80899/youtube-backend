@@ -1,3 +1,4 @@
+const db1=require('../../config/db');
 module.exports=function(app,db){
     app.get('/autocomplete/:id',(req,res)=>{
         res.send(search(req.params.id));
@@ -5,7 +6,15 @@ module.exports=function(app,db){
     app.post('/autocomplete',(req,res)=>{
         console.log(req.body.text);
         add(req.body.text);
-        res.send('ok');
+        const auto={id:'auto',text:req.body.text};
+        db.collection('autosearch').insert(auto,(err,result)=>{
+          if(err){
+              res.send({'error':'An error has occured'});
+          }else{
+              res.send(result.ops[0]);
+          }
+      });
+        // res.send('ok');
     })
 }
 class TrieNode{
@@ -63,11 +72,10 @@ class TrieNode{
     }
     return ans;
   }
-  add('anjan');
-add('all is well');
-add('wish U');
-add('anu emmaunuel');
-add('dynamic developers');
-add('micheal jackson');
-add('mike tyson');
-add('micheal jackson beat it');
+  
+var data=function(){
+  db1.collection('autosearch').find();
+}
+for(var i=0;i<data.length;i++){
+  add(data[i]);
+}
